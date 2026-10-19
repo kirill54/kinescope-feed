@@ -130,6 +130,10 @@ function render() {
     img.src = posterUrl(item.id);
     slide.appendChild(img);
 
+    const slot = document.createElement("div");
+    slot.className = "player-slot";
+    slide.appendChild(slot);
+
     const shade = document.createElement("div");
     shade.className = "shade";
     slide.appendChild(shade);
@@ -338,13 +342,13 @@ async function takeBench(index, token) {
     return true;
   }
   const node = document.getElementById(ready.hostId);
-  const stage = document.getElementById("stage");
-  if (!node || !stage) {
+  const slot = slides()[index] && slides()[index].querySelector(".player-slot");
+  if (!node || !slot) {
     document.documentElement.dataset.take = "no-node";
     return false;
   }
   document.documentElement.dataset.take = "ok";
-  stage.appendChild(node);
+  slot.appendChild(node);
   player = ready.player;
   bindPlayer(player, token);
   document.documentElement.dataset.player = "ready";
@@ -404,7 +408,7 @@ async function openVideo(index, token) {
   const hostId = "play-" + (++benchSerial);
   const host = document.createElement("div");
   host.id = hostId;
-  document.getElementById("stage").appendChild(host);
+  slides()[index].querySelector(".player-slot").appendChild(host);
 
   const instance = await factory.create(hostId, playerOptions(FEED[index].id, true));
 
