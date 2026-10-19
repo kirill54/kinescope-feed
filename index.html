@@ -7,21 +7,20 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="feed.css" />
+  <link rel="stylesheet" href="feed.css?v=9" />
 </head>
 <body>
   <main class="phone">
     <div class="frame">
       <div id="stage" aria-hidden="true"><div id="player"></div></div>
+      <div id="bench" aria-hidden="true"></div>
       <div class="feed" id="feed" tabindex="0"></div>
       <header class="topbar">
         <button type="button" class="icon" data-action="close" aria-label="Закрыть">
           <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
         </button>
         <p class="brand">Тревел лента</p>
-        <button type="button" class="icon" data-action="share" aria-label="Поделиться">
-          <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v10M8 8l4-4 4 4M6 13v5a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </button>
+        <span class="icon" aria-hidden="true"></span>
       </header>
       <div class="scrub">
         <div class="scrub-bar"><div class="scrub-fill" id="scrub"></div></div>
@@ -37,6 +36,6 @@
     };
   </script>
   <script src="https://player.kinescope.io/latest/iframe.player.js"></script>
-  <script src="feed.js"></script>
+  <script src="feed.js?v=9"></script>
 </body>
 </html>
