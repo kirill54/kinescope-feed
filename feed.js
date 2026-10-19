@@ -303,7 +303,7 @@ function warmNext(fromIndex) {
     document.getElementById("bench").appendChild(host);
     let instance;
     try {
-      instance = await factory.create(hostId, playerOptions(FEED[next].id, true));
+      instance = await factory.create(hostId, playerOptions(FEED[next].id, false));
     } catch (error) {
       return;
     }
@@ -312,13 +312,12 @@ function warmNext(fromIndex) {
       try { await instance.destroy(); } catch (error) { /* гонка */ }
       return;
     }
-    const slot = { index: next, player: instance, hostId: hostId, hold: true };
-    instance.once(instance.Events.Playing, () => {
-      if (!slot.hold) return;
-      instance.pause().catch(() => {});
-      instance.seekTo(0).catch(() => {});
-    });
-    bench = slot;
+    bench = { index: next, player: instance, hostId: hostId };
+    if (player && active === fromIndex) {
+      player.isPaused().then((paused) => {
+        if (paused && active === fromIndex) player.play().catch(() => {});
+      }).catch(() => {});
+    }
     document.documentElement.dataset.preloaded = String(next);
   });
 }
@@ -345,7 +344,6 @@ async function takeBench(index, token) {
     return false;
   }
   document.documentElement.dataset.take = "ok";
-  ready.hold = false;
   stage.appendChild(node);
   player = ready.player;
   bindPlayer(player, token);
@@ -461,7 +459,11 @@ feed.addEventListener("scroll", () => {
   scrollTimer = setTimeout(() => {
     const index = indexFromScroll();
     const aligned = Math.abs(feed.scrollTop - index * feed.clientHeight) < 4;
-    if (!aligned) return;
+    if (!aligned) {
+      scrolling = false;
+      revealActive();
+      return;
+    }
     show(index);
   }, 140);
 }, { passive: true });
