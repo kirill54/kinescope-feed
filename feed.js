@@ -395,13 +395,17 @@ function mount(index) {
     });
 }
 
+async function startPlayback(instance) {
+  try { await instance.mute(); } catch (error) { /* уже без звука */ }
+  try { await instance.play(); } catch (error) { /* повторим, когда ролик загрузится */ }
+}
+
 async function openVideo(index, token) {
   if (token !== generation || !factory) return;
-  if (await takeBench(index, token)) return;
   if (player) {
     const dying = player;
     player = null;
-    await dying.destroy();
+    try { await dying.destroy(); } catch (error) { /* старый плеер уже закрыт */ }
   }
   if (token !== generation) return;
 
@@ -421,8 +425,19 @@ async function openVideo(index, token) {
   document.documentElement.dataset.player = "ready";
   status.hidden = true;
   bindPlayer(instance, token);
-  await applyMute();
-  if (!(await instance.isPaused())) {
+  instance.once(instance.Events.Loaded, () => {
+    if (token !== generation) return;
+    startPlayback(instance);
+  });
+  await startPlayback(instance);
+  if (muted) await applyMute();
+  else {
+    try { await instance.unmute(); } catch (error) { /* звук включится следующим тапом */ }
+    paintSound();
+  }
+  let paused = true;
+  try { paused = await instance.isPaused(); } catch (error) { paused = true; }
+  if (!paused) {
     scrolling = false;
     revealActive();
   }
